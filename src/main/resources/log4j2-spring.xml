@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration name="hulgrave"
+               status="debug"
+               packages="com.fips.application.logging.BootstrapLookup"
+>
+    <Properties>
+        <Property name="applicationId">${bootstrap:spring.application.name}</Property>
+        <Property name="spring.console.pattern">%black{%date{ISO8601}} %blue{%-pid:%-5tid} %-5level [%green{${applicationId},%X{X-B3-TraceId},%X{X-B3-SpanId}}] %red{%logger{1.}:%line}: %msg%n%throwable{10}</Property>
+        <Property name="spring.log.pattern">%date{ISO8601} %-pid:%-5tid %-5level [${applicationId},%X{X-B3-TraceId},%X{X-B3-SpanId}] %logger{1.}:%line: %msg%n%throwable{10}</Property>
+        <Property name="spring.log.dir">logs</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>${spring.console.pattern}</Pattern>
+            </PatternLayout>
+        </Console>
+        <RollingRandomAccessFile name="file" fileName="${spring.log.dir}/${applicationId}.log" filePattern="${spring.log.dir}/$${date:E}/${applicationId}-%d{yyyyMMdd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>${spring.log.pattern}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </Root>
+    </Loggers>
+</configuration>
